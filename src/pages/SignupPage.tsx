@@ -6,12 +6,17 @@ export default function SignupPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [instrument, setInstrument] = useState('guitar');
-  const [role, setRole] = useState<'user' | 'admin'>('user'); // novo state
+  const [role, setRole] = useState<'user' | 'admin' | ''>(''); // inicia vazio
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!role) {
+      setMessage('Please select a role before signing up.');
+      return;
+    }
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
@@ -24,6 +29,7 @@ export default function SignupPage() {
       if (!res.ok) throw new Error(data.error || 'Signup failed');
 
       setMessage('User created successfully ✅');
+      // opcional: navigate('/login');
     } catch (err: any) {
       setMessage(err.message);
     }
@@ -68,12 +74,15 @@ export default function SignupPage() {
             <option value="vocals">Vocals</option>
           </select>
 
-          {/* NOVO CAMPO PARA ESCOLHER USER OU ADMIN */}
           <select
             className="w-full bg-[#2b3e4f] border border-gray-600 p-3 rounded text-white focus:outline-none focus:ring-2 focus:ring-[#9F453A]"
             value={role}
-            onChange={(e) => setRole(e.target.value as 'user' | 'admin')}
+            onChange={(e) => setRole(e.target.value as 'user' | 'admin' | '')}
+            required
           >
+            <option value="" disabled>
+              Select your role
+            </option>
             <option value="user">User</option>
             <option value="admin">Admin</option>
           </select>
