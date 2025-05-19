@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Lottie from 'lottie-react';
-import animation from '../assets/Animation-dog.json';
 
 interface Song {
   id: number;
