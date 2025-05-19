@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import moveoLogo from '../assets/jamoveologo.png';
+import moveoLogo from '../assets/jaLogo-cut.png';
 import { useNavigate } from 'react-router-dom';
 
 export default function SignupPage() {

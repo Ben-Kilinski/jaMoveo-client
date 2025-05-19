@@ -72,7 +72,7 @@ export default function AdminMainPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#355167] text-white p-6">
+    <div className="min-h-screen bg-[#355167] text-white p-6 pt-12">
       <h1 className="text-2xl font-bold mb-6 text-[#9F453A] text-center">Search any song...</h1>
 
       {latestSong && (
