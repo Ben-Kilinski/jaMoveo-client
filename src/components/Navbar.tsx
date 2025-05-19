@@ -4,7 +4,7 @@ import Lottie from 'lottie-react';
 
 export default function Navbar() {
  return (
-  <nav className="bg-[#1f2c38] text-white px-6 py-2 shadow-md flex justify-between items-center fixed top-0 w-full z-50">
+  <nav className="bg-[#1f2c38] text-white px-2 py-2 shadow-md flex justify-between items-center fixed top-0 w-full z-50">
 
     <div className="flex items-center">
       <Lottie
@@ -18,10 +18,10 @@ export default function Navbar() {
 
     {/* Links de navegação */}
     <ul className="flex gap-6 text-sm font-medium">
-      <li><Link to="/">Home</Link></li>
-      <li><Link to="/admin">Admin</Link></li>
+      <li><Link to="/live">Live</Link></li>
+      <li><Link to="/admin">Search</Link></li>
       <li><Link to="/admin/results">Histórico</Link></li>
-      <li><Link to="/player/1">Player</Link></li>
+      <li><Link to="/player/0">Player</Link></li>
       <li><Link to="/login">Login</Link></li>
       <li><Link to="/signup">Signup</Link></li>
     </ul>
