@@ -188,7 +188,7 @@ export default function PlayerMainPage() {
         ) : (
           <div>
             <h2 className="text-lg font-bold text-[#9F453A] mb-2">Lyrics</h2>
-            <pre className="whitespace-pre-wrap text-sm text-gray-100">baba</pre>
+            <pre className="whitespace-pre-wrap text-sm text-gray-100">{song.lyrics}</pre>
           </div>
         )}
       </>
