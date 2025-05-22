@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:3001', {
-  transports: ['websocket'], // forçar websocket localmente
+const socket = io(import.meta.env.VITE_API_URL, {
+  transports: ['websocket'],
   withCredentials: true,
 });
 
