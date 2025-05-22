@@ -39,7 +39,7 @@ export default function LoginPage() {
 
   return (
     <div className='bg-[#355167] h-screen'>
-    <div className="h-60vh flex flex-col items-center bg-[#355167] text-white px-4 overflow-hidden">
+    <div className="h-60vh flex flex-col items-center bg-red-300 text-white px-4 overflow-hidden">
 
       <div className="pt-6 flex flex-col items-center mb-6">
         <img
