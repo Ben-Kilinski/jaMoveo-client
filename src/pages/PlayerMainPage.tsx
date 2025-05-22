@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 interface Song {
@@ -22,6 +22,7 @@ export default function PlayerMainPage() {
   const [editedChords, setEditedChords] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [audioKey, setAudioKey] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   useEffect(() => {
@@ -47,6 +48,13 @@ export default function PlayerMainPage() {
     };
     fetchSong();
   }, [id]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.load();
+      audioRef.current.play().catch(err => console.log('Erro ao dar play automático:', err));
+    }
+  }, [song?.previewUrl]);
 
   const handleSearch = async () => {
     try {
@@ -142,10 +150,9 @@ export default function PlayerMainPage() {
           <img src={song.artworkUrl100} alt={song.trackName} className="w-40 h-40 mb-4 rounded-lg" />
 
           {song.previewUrl && (
-            <audio key={`${audioKey}-${song?.previewUrl}`} controls autoPlay loop className="mb-6">
+            <audio ref={audioRef} controls autoPlay loop className="mb-6">
               <source src={song.previewUrl} type="audio/mpeg" />
             </audio>
-
           )}
 
           {editMode ? (
