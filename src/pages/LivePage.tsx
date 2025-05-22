@@ -165,8 +165,7 @@ export default function PlayerMainPage() {
                 Save Chords
               </button>
             </div>
-          ) : song.chords && user?.role !== 'singer' ? (
-            // 👉 letra com cifra em cima (formato inline)
+          ) : (song.chords && user?.role !== 'singer') ? (
             <div className="mb-6">
               <h2 className="text-lg font-bold text-[#9F453A] mb-2">Chords</h2>
               <div className="space-y-4 font-mono">
@@ -186,16 +185,12 @@ export default function PlayerMainPage() {
                 ))}
               </div>
             </div>
-          ) : song.lyrics ? (
-            // 👉 letra simples
+          ) : (
             <div>
               <h2 className="text-lg font-bold text-[#9F453A] mb-2">Lyrics</h2>
               <pre className="whitespace-pre-wrap text-sm text-gray-100">{song.lyrics}</pre>
             </div>
-          ) : null}
-
-
-
+          )}
         </>
       )}
     </div>
