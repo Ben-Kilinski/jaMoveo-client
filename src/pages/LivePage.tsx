@@ -18,7 +18,6 @@ export default function PlayerMainPage() {
   const [song, setSong] = useState<Song | null>(null);
   const [loading, setLoading] = useState(true);
   const [chordSize, setChordSize] = useState<'text-sm' | 'text-base' | 'text-lg'>('text-sm');
-  const [viewMode, setViewMode] = useState<'all' | 'lyrics' | 'chords'>('all');
   const [editMode, setEditMode] = useState(false);
   const [editedChords, setEditedChords] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -55,7 +54,6 @@ export default function PlayerMainPage() {
     };
 
     socket.on('song-selected', handleSongSelected);
-
     return () => {
       socket.off('song-selected', handleSongSelected);
     };
@@ -133,9 +131,6 @@ export default function PlayerMainPage() {
           <div className="flex gap-2">
             <button onClick={() => setChordSize('text-sm')} className="text-xs bg-gray-600 px-2 py-1 rounded">A-</button>
             <button onClick={() => setChordSize('text-lg')} className="text-xs bg-gray-600 px-2 py-1 rounded">A+</button>
-            <button onClick={() => setViewMode(viewMode === 'all' ? 'lyrics' : viewMode === 'lyrics' ? 'chords' : 'all')} className="text-xs bg-blue-600 px-2 py-1 rounded">
-              {viewMode === 'all' ? 'Letras' : viewMode === 'lyrics' ? 'Cifras' : 'Tudo'}
-            </button>
             {user?.role === 'admin' && (
               <button onClick={() => setEditMode(!editMode)} className="text-xs bg-green-700 px-2 py-1 rounded">
                 {editMode ? 'Visualizar' : 'Editar'}
@@ -170,42 +165,37 @@ export default function PlayerMainPage() {
                 Salvar Cifras
               </button>
             </div>
-          ) : (
-            <>
-              {song.chords && viewMode !== 'lyrics' && (
-                <div className="mb-6">
-                  <h2 className="text-lg font-bold text-[#9F453A] mb-2">Cifras</h2>
-                  <div className="space-y-4 font-mono">
-                    {JSON.parse(song.chords).map((line: any[], index: number) => (
-                      <div key={index}>
-                        <div className="flex gap-2 justify-center">
-                          {line.map((item, idx) => (
-                            <span key={idx} className={`min-w-[50px] text-green-300 text-center ${chordSize}`}>
-                              {item.chords || ''}
-                            </span>
-                          ))}
-                        </div>
-                        <div className="flex gap-2 justify-center">
-                          {line.map((item, idx) => (
-                            <span key={idx} className={`min-w-[50px] text-white text-center ${chordSize}`}>
-                              {item.lyrics}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
+          ) : song.chords && user?.role !== 'singer' ? (
+            <div className="mb-6">
+              <h2 className="text-lg font-bold text-[#9F453A] mb-2">Cifras</h2>
+              <div className="space-y-4 font-mono">
+                {JSON.parse(song.chords).map((line: any[], index: number) => (
+                  <div key={index}>
+                    <div className="flex gap-2 justify-center">
+                      {line.map((item, idx) => (
+                        <span key={idx} className={`min-w-[50px] text-green-300 text-center ${chordSize}`}>
+                          {item.chords || ''}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex gap-2 justify-center">
+                      {line.map((item, idx) => (
+                        <span key={idx} className={`min-w-[50px] text-white text-center ${chordSize}`}>
+                          {item.lyrics}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                ))}
+              </div>
+            </div>
+          ) : song.lyrics ? (
+            <div>
+              <h2 className="text-lg font-bold text-[#9F453A] mb-2">Letra</h2>
+              <pre className="whitespace-pre-wrap text-sm text-gray-100">{song.lyrics}</pre>
+            </div>
+          ) : null}
 
-              {song.lyrics && viewMode !== 'chords' && (
-                <div>
-                  <h2 className="text-lg font-bold text-[#9F453A] mb-2">Letra</h2>
-                  <pre className="whitespace-pre-wrap text-sm text-gray-100">{song.lyrics}</pre>
-                </div>
-              )}
-            </>
-          )}
         </>
       )}
     </div>
