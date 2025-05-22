@@ -38,7 +38,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center bg-[#355167] text-white px-4 overflow-hidden">
+    <div className='bg-[#355167] h-screen'>
+    <div className="h-90vh flex flex-col items-center bg-[#355167] text-white px-4 overflow-hidden">
 
       <div className="pt-6 flex flex-col items-center mb-6">
         <img
@@ -98,6 +99,7 @@ export default function LoginPage() {
         autoplay
         className="w-44 h-auto scale-x-[-1] "
       />
+    </div>
     </div>
   );
 
