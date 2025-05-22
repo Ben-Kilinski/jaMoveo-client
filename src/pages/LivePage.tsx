@@ -38,7 +38,7 @@ export default function PlayerMainPage() {
           setEditedChords(JSON.stringify(JSON.parse(data.chords), null, 2));
         }
       } catch (error) {
-        console.error('Erro ao buscar a música:', error);
+        console.error('Error searching song:', error);
       } finally {
         setLoading(false);
       }
@@ -48,7 +48,7 @@ export default function PlayerMainPage() {
 
   useEffect(() => {
     const handleSongSelected = (data: Song) => {
-      console.log('📡 Atualizando música via socket:', data);
+      console.log('📡 Updating song by socked:', data);
       setSong(data);
       setEditedChords(data.chords ? JSON.stringify(JSON.parse(data.chords), null, 2) : '');
     };
@@ -64,7 +64,7 @@ export default function PlayerMainPage() {
       const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(searchTerm)}&media=music&limit=1`);
       const data = await res.json();
       const song = data.results[0];
-      if (!song) return alert('Nenhuma música encontrada');
+      if (!song) return alert('No song found');
 
       const payload = {
         trackId: song.trackId,
@@ -83,7 +83,7 @@ export default function PlayerMainPage() {
       const savedSong = await saveRes.json();
       setSong({ ...payload, id: savedSong.id, lyrics: savedSong.lyrics, chords: savedSong.chords });
     } catch (error) {
-      console.error('Erro na busca:', error);
+      console.error('Error on search:', error);
     }
   };
 
@@ -96,14 +96,14 @@ export default function PlayerMainPage() {
         body: JSON.stringify({ chords: parsed }),
       });
       if (res.ok) {
-        alert('Cifras salvas!');
+        alert('Chords saved!');
         setEditMode(false);
         setSong({ ...song!, chords: JSON.stringify(parsed) });
       } else {
-        throw new Error('Erro ao salvar cifras');
+        throw new Error('Error saving chords');
       }
     } catch {
-      alert('Erro: JSON inválido');
+      alert('Error: JSON inválido');
     }
   };
 
@@ -112,7 +112,7 @@ export default function PlayerMainPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1f2c38] text-white p-6">
+    <div className="min-h-screen bg-[#1f2c38] text-white p-6 mt-20">
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div className="flex items-center gap-2">
           <input
@@ -141,7 +141,7 @@ export default function PlayerMainPage() {
       </div>
 
       {!song ? (
-        <div className="text-center text-gray-300">Nenhuma música carregada</div>
+        <div className="text-center text-gray-300">No song loaded</div>
       ) : (
         <>
           <h1 className="text-2xl font-bold text-[#9F453A]">{song.trackName}</h1>
@@ -162,7 +162,7 @@ export default function PlayerMainPage() {
                 className="w-full h-64 bg-[#2b3e4f] p-4 text-sm text-white font-mono rounded"
               />
               <button onClick={handleSaveChords} className="mt-2 px-4 py-2 bg-[#9F453A] rounded hover:bg-[#b85547]">
-                Salvar Cifras
+                Save Chords
               </button>
             </div>
           ) : (
