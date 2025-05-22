@@ -10,7 +10,7 @@ export default function AdminChordsEditor() {
 
   useEffect(() => {
     const fetchSong = async () => {
-      const res = await fetch(`http://localhost:3001/api/songs/current`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/songs/current`);
       const data = await res.json();
       if (data.id.toString() === id) {
         setTrackName(data.trackName);
@@ -25,7 +25,7 @@ export default function AdminChordsEditor() {
   const handleSave = async () => {
     try {
       const parsed = JSON.parse(chords);
-      const res = await fetch(`http://localhost:3001/api/songs/${id}/chords`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/songs/${id}/chords`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ chords: parsed }),

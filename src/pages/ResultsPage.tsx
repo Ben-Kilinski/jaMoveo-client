@@ -16,7 +16,7 @@ export default function ResultsPage() {
   const clearHistory = async () => {
     const confirm = window.confirm('Are you sure you want to clear the history?');
     if (!confirm) return;
-    await fetch('http://localhost:3001/api/songs/history', { method: 'DELETE' });
+    await fetch(`${import.meta.env.VITE_API_URL}/api/songs/history`, { method: 'DELETE' });
     setSongs([]);
   };
 
@@ -42,7 +42,7 @@ export default function ResultsPage() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await fetch('http://localhost:3001/api/songs/history');
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/songs/history`);
         const data = await res.json();
         setSongs(data);
       } catch (err) {
