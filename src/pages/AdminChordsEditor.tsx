@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-// shalev
+
 export default function AdminChordsEditor() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -32,40 +32,39 @@ export default function AdminChordsEditor() {
       });
 
       if (res.ok) {
-        setMessage('✅ Chords saved!');
+        setMessage('✅ Chords saved successfully!');
         setTimeout(() => navigate('/admin'), 1000);
       } else {
-        throw new Error('Erro ao salvar cifra');
+        throw new Error('Failed to save chords');
       }
     } catch (err) {
-      setMessage('❌ JSON inválido ou erro na requisição');
+      setMessage('❌ Invalid JSON or request error');
     }
   };
 
   return (
-  <div className="min-h-screen bg-[#355167] text-white p-6 flex flex-col items-center">
-    <h1 className="text-2xl font-bold mb-4 text-[#9F453A]">
-      Edit Chords for: {trackName}
-    </h1>
+    <div className="min-h-screen bg-[#355167] text-white p-6 flex flex-col items-center">
+      <h1 className="text-2xl font-bold mb-4 text-[#9F453A]">
+        Edit Chords for: {trackName}
+      </h1>
 
-    <textarea
-      className="w-full max-w-2xl h-96 p-4 bg-[#1f2c38] border border-[#9F453A] rounded font-mono text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#9F453A]"
-      value={chords}
-      onChange={(e) => setChords(e.target.value)}
-      placeholder='Paste the chord JSON here (like in hey_jude.json)'
-    />
+      <textarea
+        className="w-full max-w-2xl h-96 p-4 bg-[#1f2c38] border border-[#9F453A] rounded font-mono text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#9F453A]"
+        value={chords}
+        onChange={(e) => setChords(e.target.value)}
+        placeholder="Paste the chord JSON here (like in hey_jude.json)"
+      />
 
-    <button
-      onClick={handleSave}
-      className="mt-4 bg-[#9F453A] text-white px-6 py-2 rounded hover:bg-[#b85547] transition"
-    >
-      Save Chords
-    </button>
+      <button
+        onClick={handleSave}
+        className="mt-4 bg-[#9F453A] text-white px-6 py-2 rounded hover:bg-[#b85547] transition"
+      >
+        Save Chords
+      </button>
 
-    {message && (
-      <p className="mt-4 text-sm text-center text-gray-300">{message}</p>
-    )}
-  </div>
-);
-
+      {message && (
+        <p className="mt-4 text-sm text-center text-gray-300">{message}</p>
+      )}
+    </div>
+  );
 }

@@ -165,42 +165,35 @@ export default function PlayerMainPage() {
                 Save Chords
               </button>
             </div>
-          ) : (
-            <>
-              {/* Mostrar apenas cifras se disponíveis e usuário não for 'singer' */}
-              {song.chords && user?.role !== 'singer' ? (
-                <div className="mb-6">
-                  <h2 className="text-lg font-bold text-[#9F453A] mb-2">Cifras</h2>
-                  <div className="space-y-4 font-mono">
-                    {JSON.parse(song.chords).map((line: any[], index: number) => (
-                      <div key={index}>
-                        <div className="flex gap-2 justify-center">
-                          {line.map((item, idx) => (
-                            <span key={idx} className={`min-w-[50px] text-green-300 text-center ${chordSize}`}>
-                              {item.chords || ''}
-                            </span>
-                          ))}
-                        </div>
-                        <div className="flex gap-2 justify-center">
-                          {line.map((item, idx) => (
-                            <span key={idx} className={`min-w-[50px] text-white text-center ${chordSize}`}>
-                              {item.lyrics}
-                            </span>
-                          ))}
-                        </div>
+          ) : song.chords && user?.role !== 'singer' ? (
+            // 👉 letra com cifra em cima (formato inline)
+            <div className="mb-6">
+              <h2 className="text-lg font-bold text-[#9F453A] mb-2">Chords</h2>
+              <div className="space-y-4 font-mono">
+                {JSON.parse(song.chords).map((line: any[], index: number) => (
+                  <div key={index} className="flex gap-2 justify-center">
+                    {line.map((item, idx) => (
+                      <div key={idx} className="flex flex-col items-center min-w-[50px]">
+                        <span className={`text-green-300 text-center ${chordSize}`}>
+                          {item.chords || ''}
+                        </span>
+                        <span className={`text-white text-center ${chordSize}`}>
+                          {item.lyrics}
+                        </span>
                       </div>
                     ))}
                   </div>
-                </div>
-              ) : song.lyrics ? (
-                // Se não tem cifras ou for 'singer', mostra só a letra
-                <div>
-                  <h2 className="text-lg font-bold text-[#9F453A] mb-2">Letra</h2>
-                  <pre className="whitespace-pre-wrap text-sm text-gray-100">{song.lyrics}</pre>
-                </div>
-              ) : null}
-            </>
-          )}
+                ))}
+              </div>
+            </div>
+          ) : song.lyrics ? (
+            // 👉 letra simples
+            <div>
+              <h2 className="text-lg font-bold text-[#9F453A] mb-2">Lyrics</h2>
+              <pre className="whitespace-pre-wrap text-sm text-gray-100">{song.lyrics}</pre>
+            </div>
+          ) : null}
+
 
 
         </>
