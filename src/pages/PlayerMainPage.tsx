@@ -150,7 +150,14 @@ export default function PlayerMainPage() {
           <img src={song.artworkUrl100} alt={song.trackName} className="w-40 h-40 mb-4 rounded-lg" />
 
           {song.previewUrl && (
-            <audio ref={audioRef} controls autoPlay loop className="mb-6">
+            <audio
+              key={`${audioKey}-${song.previewUrl}`}
+              ref={audioRef}
+              controls
+              autoPlay
+              loop
+              className="mb-6"
+            >
               <source src={song.previewUrl} type="audio/mpeg" />
             </audio>
           )}
