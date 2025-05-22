@@ -131,11 +131,6 @@ export default function PlayerMainPage() {
         <div className="flex gap-2">
           <button onClick={() => setChordSize('text-sm')} className="text-xs bg-gray-600 px-2 py-1 rounded">A-</button>
           <button onClick={() => setChordSize('text-lg')} className="text-xs bg-gray-600 px-2 py-1 rounded">A+</button>
-          {user?.role === 'admin' && (
-            <button onClick={() => setEditMode(!editMode)} className="text-xs bg-green-700 px-2 py-1 rounded">
-              {editMode ? 'Visualizar' : 'Editar'}
-            </button>
-          )}
         </div>
       )}
     </div>
@@ -154,35 +149,31 @@ export default function PlayerMainPage() {
           </audio>
         )}
 
-        {editMode ? (
-          <div className="mb-6">
-            <textarea
-              value={editedChords}
-              onChange={(e) => setEditedChords(e.target.value)}
-              className="w-full h-64 bg-[#2b3e4f] p-4 text-sm text-white font-mono rounded"
-            />
-            <button onClick={handleSaveChords} className="mt-2 px-4 py-2 bg-[#9F453A] rounded hover:bg-[#b85547]">
-              Save Chords
-            </button>
-          </div>
-        ) : (song.chords && user?.role !== 'singer') ? (
+        {(song.chords && user?.role !== 'singer') ? (
           <div className="mb-6">
             <h2 className="text-lg font-bold text-[#9F453A] mb-2">Chords</h2>
             <div className="space-y-4 font-mono">
-              {JSON.parse(song.chords).map((line: any[], index: number) => (
-                <div key={index} className="flex gap-2 justify-center">
-                  {line.map((item, idx) => (
-                    <div key={idx} className="flex flex-col items-center min-w-[50px]">
-                      <span className={`text-green-300 text-center ${chordSize}`}>
-                        {item.chords || ''}
-                      </span>
-                      <span className={`text-white text-center ${chordSize}`}>
-                        {item.lyrics}
-                      </span>
+              {(() => {
+                try {
+                  const chordsArray = JSON.parse(song.chords);
+                  return chordsArray.map((line: any[], index: number) => (
+                    <div key={index} className="flex gap-2 justify-center">
+                      {line.map((item, idx) => (
+                        <div key={idx} className="flex flex-col items-center min-w-[50px]">
+                          <span className={`text-green-300 text-center ${chordSize}`}>
+                            {item.chords || ''}
+                          </span>
+                          <span className={`text-white text-center ${chordSize}`}>
+                            {item.lyrics}
+                          </span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              ))}
+                  ));
+                } catch {
+                  return <p className="text-red-400">Erro ao carregar cifras</p>;
+                }
+              })()}
             </div>
           </div>
         ) : (
@@ -195,5 +186,6 @@ export default function PlayerMainPage() {
     )}
   </div>
 );
+
 
 }
