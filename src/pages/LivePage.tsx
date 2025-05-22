@@ -108,7 +108,7 @@ export default function PlayerMainPage() {
   };
 
   if (loading) {
-    return <div className="p-4 text-white text-xl text-center">🔄 Carregando música...</div>;
+    return <div className="p-4 text-white text-xl text-center">🔄 loading song...</div>;
   }
 
   return (
@@ -125,7 +125,7 @@ export default function PlayerMainPage() {
         <button
           onClick={handleSearch}
           className="bg-[#9F453A] px-4 py-2 rounded hover:bg-[#b85547] text-sm"
-        >Buscar</button>
+        >Search</button>
       </div>
       {song && (
         <div className="flex gap-2">
@@ -188,7 +188,7 @@ export default function PlayerMainPage() {
         ) : (
           <div>
             <h2 className="text-lg font-bold text-[#9F453A] mb-2">Lyrics</h2>
-            <pre className="whitespace-pre-wrap text-sm text-gray-100">{song.lyrics}</pre>
+            <pre className="whitespace-pre-wrap text-sm text-gray-100">baba</pre>
           </div>
         )}
       </>
