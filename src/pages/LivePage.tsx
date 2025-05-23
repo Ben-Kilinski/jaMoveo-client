@@ -13,15 +13,17 @@ interface Song {
   chords: string | null;
 }
 
-export default function PlayerMainPage() {
+export default function LivePage() {
   const { id } = useParams();
   const [song, setSong] = useState<Song | null>(null);
   const [loading, setLoading] = useState(true);
-  const [chordSize, setChordSize] = useState<'text-sm' | 'text-base' | 'text-lg'>('text-sm');
+  const [chordSize, setChordSize] = useState<'text-sm' | 'text-base' | 'text-lg'>('text-base');
   const [editMode, setEditMode] = useState(false);
   const [editedChords, setEditedChords] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  const sizes: ('text-sm' | 'text-base' | 'text-lg')[] = ['text-sm', 'text-base', 'text-lg'];
+  const currentIndex = sizes.indexOf(chordSize);
 
   useEffect(() => {
     const fetchSong = async () => {
@@ -48,7 +50,6 @@ export default function PlayerMainPage() {
 
   useEffect(() => {
     const handleSongSelected = (data: Song) => {
-      console.log('📡 Updating song by socked:', data);
       setSong(data);
       setEditedChords(data.chords ? JSON.stringify(JSON.parse(data.chords), null, 2) : '');
     };
@@ -58,34 +59,6 @@ export default function PlayerMainPage() {
       socket.off('song-selected', handleSongSelected);
     };
   }, []);
-
-  const handleSearch = async () => {
-    try {
-      const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(searchTerm)}&media=music&limit=1`);
-      const data = await res.json();
-      const song = data.results[0];
-      if (!song) return alert('No song found');
-
-      const payload = {
-        trackId: song.trackId,
-        trackName: song.trackName,
-        artistName: song.artistName,
-        artworkUrl100: song.artworkUrl100,
-        previewUrl: song.previewUrl,
-      };
-
-      const saveRes = await fetch(`${import.meta.env.VITE_API_URL}/api/songs/current`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const savedSong = await saveRes.json();
-      setSong({ ...payload, id: savedSong.id, lyrics: savedSong.lyrics, chords: savedSong.chords });
-    } catch (error) {
-      console.error('Error on search:', error);
-    }
-  };
 
   const handleSaveChords = async () => {
     try {
@@ -112,88 +85,93 @@ export default function PlayerMainPage() {
   }
 
   return (
-  <div className="min-h-screen bg-[#1f2c38] text-white p-6 mt-20">
-    <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-      <div className="flex items-center gap-2">
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Buscar música no iTunes"
-          className="bg-[#2b3e4f] border border-gray-600 p-2 rounded text-white placeholder-gray-400"
-        />
-        <button
-          onClick={handleSearch}
-          className="bg-[#9F453A] px-4 py-2 rounded hover:bg-[#b85547] text-sm"
-        >Search</button>
-      </div>
-      {song && (
-        <div className="flex gap-2">
-          <button onClick={() => setChordSize('text-sm')} className="text-xs bg-gray-600 px-2 py-1 rounded">A-</button>
-          <button onClick={() => setChordSize('text-lg')} className="text-xs bg-gray-600 px-2 py-1 rounded">A+</button>
-          {user?.role === 'admin' && (
-            <button onClick={() => setEditMode(!editMode)} className="text-xs bg-green-700 px-2 py-1 rounded">
-              {editMode ? 'Visualizar' : 'Editar'}
+    <div className="min-h-screen bg-[#1f2c38] text-white p-6">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-start gap-2">
+        {song && (
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setChordSize(sizes[Math.max(0, currentIndex - 1)])}
+              className="text-xs bg-gray-600 px-2 py-1 rounded"
+            >
+              A-
             </button>
+            <button
+              onClick={() => setChordSize(sizes[Math.min(sizes.length - 1, currentIndex + 1)])}
+              className="text-xs bg-gray-600 px-2 py-1 rounded"
+            >
+              A+
+            </button>
+            {user?.role === 'admin' && (
+              <button onClick={() => setEditMode(!editMode)} className="text-xs bg-green-700 px-2 py-1 rounded">
+                {editMode ? 'Visualizar' : 'Editar'}
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+
+      {!song ? (
+        <div className="text-center text-gray-300">No song loaded</div>
+      ) : (
+        <>
+          <h1 className="text-2xl font-bold text-[#9F453A]">{song.trackName}</h1>
+          <p className="text-sm text-gray-300 mb-4">by {song.artistName}</p>
+          <img
+            src={song.artworkUrl100}
+            alt={song.trackName}
+            className="w-40 h-40 mb-4 rounded-lg"
+          />
+
+          {song.previewUrl && (
+            <audio controls loop className="mb-6 w-full max-w-sm">
+              <source src={song.previewUrl} type="audio/mpeg" />
+            </audio>
           )}
-        </div>
+
+          {editMode ? (
+            <div className="mb-6">
+              <textarea
+                value={editedChords}
+                onChange={(e) => setEditedChords(e.target.value)}
+                className="w-full h-64 bg-[#2b3e4f] p-4 text-sm text-white font-mono rounded"
+              />
+              <button onClick={handleSaveChords} className="mt-2 px-4 py-2 bg-[#9F453A] rounded hover:bg-[#b85547]">
+                Save Chords
+              </button>
+            </div>
+          ) : song.chords ? (
+            <div className="mb-6">
+              <h2 className="text-lg font-bold text-[#9F453A] mb-2">Chords</h2>
+              <div className="space-y-4 font-mono">
+                {JSON.parse(song.chords).map((line: any[], index: number) => (
+                  <div key={index} className="flex flex-wrap justify-start gap-4">
+                    {line.map((item, idx) => (
+                      <div key={idx} className="flex flex-col items-center min-w-[40px] px-1">
+                        <span className={`text-green-300 text-center ${chordSize}`}>
+                          {item.chords || ''}
+                        </span>
+                        <span className={`text-white text-center ${chordSize}`}>
+                          {item.lyrics}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : song.lyrics ? (
+            <div>
+              <h2 className="text-lg font-bold text-[#9F453A] mb-2">Lyrics</h2>
+              <pre className={`whitespace-pre-wrap ${chordSize} text-gray-100`}>{song.lyrics}</pre>
+
+            </div>
+          ) : (
+            <div className="text-sm text-gray-400 italic mt-4">
+              Lyrics or chords not found. Admin can add it in Search page.
+            </div>
+          )}
+        </>
       )}
     </div>
-
-    {!song ? (
-      <div className="text-center text-gray-300">No song loaded</div>
-    ) : (
-      <>
-        <h1 className="text-2xl font-bold text-[#9F453A]">{song.trackName}</h1>
-        <p className="text-sm text-gray-300 mb-4">by {song.artistName}</p>
-        <img src={song.artworkUrl100} alt={song.trackName} className="w-40 h-40 mb-4 rounded-lg" />
-
-        {song.previewUrl && (
-          <audio controls loop className="mb-6">
-            <source src={song.previewUrl} type="audio/mpeg" />
-          </audio>
-        )}
-
-        {editMode ? (
-          <div className="mb-6">
-            <textarea
-              value={editedChords}
-              onChange={(e) => setEditedChords(e.target.value)}
-              className="w-full h-64 bg-[#2b3e4f] p-4 text-sm text-white font-mono rounded"
-            />
-            <button onClick={handleSaveChords} className="mt-2 px-4 py-2 bg-[#9F453A] rounded hover:bg-[#b85547]">
-              Save Chords
-            </button>
-          </div>
-        ) : (song.chords && user?.role !== 'singer') ? (
-          <div className="mb-6">
-            <h2 className="text-lg font-bold text-[#9F453A] mb-2">Chords</h2>
-            <div className="space-y-4 font-mono">
-              {JSON.parse(song.chords).map((line: any[], index: number) => (
-                <div key={index} className="flex gap-2 justify-center">
-                  {line.map((item, idx) => (
-                    <div key={idx} className="flex flex-col items-center min-w-[50px]">
-                      <span className={`text-green-300 text-center ${chordSize}`}>
-                        {item.chords || ''}
-                      </span>
-                      <span className={`text-white text-center ${chordSize}`}>
-                        {item.lyrics}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div>
-            <h2 className="text-lg font-bold text-[#9F453A] mb-2">Lyrics</h2>
-            <pre className="whitespace-pre-wrap text-sm text-gray-100">{song.lyrics}</pre>
-          </div>
-        )}
-      </>
-    )}
-  </div>
-);
-
+  );
 }

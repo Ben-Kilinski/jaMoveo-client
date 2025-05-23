@@ -78,14 +78,14 @@ export default function AdminMainPage() {
       {latestSong && (
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between bg-[#1f2c38] border border-[#9F453A] p-4 rounded-xl shadow">
           <p className="text-sm text-white">
-            Última música selecionada: <strong>{latestSong.trackName}</strong>
+            Last selected song: <strong>{latestSong.trackName}</strong>
           </p>
           <div className="mt-3 sm:mt-0 flex gap-2">
             <button
               onClick={() => navigate(`/admin/chords-editor/${latestSong.id}`)}
               className="bg-[#9F453A] text-white px-4 py-2 rounded hover:bg-[#b85547] transition"
             >
-              Editar Cifras
+              Edit chords
             </button>
 
             <button

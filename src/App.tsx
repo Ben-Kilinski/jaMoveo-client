@@ -1,14 +1,14 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
-import PlayerMainPage from './pages/PlayerMainPage';
+import LivePage from './pages/LivePage';
 import AdminMainPage from './pages/AdminMainPage';
 import ResultsPage from './pages/ResultsPage';
-import LivePage from './pages/LivePage';
 import OnboardingPage from './pages/OnboardingPage';
 import RequireAuth from './components/RequireAuth';
 import AdminChordsEditor from './pages/AdminChordsEditor';
 import Navbar from './components/Navbar';
+import PlayerMainPage from './pages/PlayerMainPage';
 
 export default function App() {
   const location = useLocation();
@@ -20,7 +20,8 @@ export default function App() {
     <>
       {!hideNavbar && <Navbar />}
 
-      <div className={hideNavbar ? '' : 'pt-0'}>
+      <div className={hideNavbar ? '' : 'pt-[72px]'}>
+
         <Routes>
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />

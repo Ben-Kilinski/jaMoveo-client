@@ -16,7 +16,7 @@ export default function PlayerMainPage() {
   const { id } = useParams();
   const [song, setSong] = useState<Song | null>(null);
   const [loading, setLoading] = useState(true);
-  const [chordSize, setChordSize] = useState<'text-sm' | 'text-base' | 'text-lg'>('text-sm');
+  const [chordSize, setChordSize] = useState<'text-sm' | 'text-base' | 'text-lg'>('text-base');
   const [viewMode, setViewMode] = useState<'all' | 'lyrics' | 'chords'>('all');
   const [editMode, setEditMode] = useState(false);
   const [editedChords, setEditedChords] = useState('');
@@ -24,6 +24,9 @@ export default function PlayerMainPage() {
   const [audioKey, setAudioKey] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  const sizes: ('text-sm' | 'text-base' | 'text-lg')[] = ['text-sm', 'text-base', 'text-lg'];
+  const currentIndex = sizes.indexOf(chordSize);
 
   useEffect(() => {
     const fetchSong = async () => {
@@ -117,24 +120,35 @@ export default function PlayerMainPage() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar música no iTunes"
+            placeholder="Search song on iTunes"
             className="bg-[#2b3e4f] border border-gray-600 p-2 rounded text-white placeholder-gray-400"
           />
           <button
             onClick={handleSearch}
             className="bg-[#9F453A] px-4 py-2 rounded hover:bg-[#b85547] text-sm"
-          >Buscar</button>
+          >Search</button>
         </div>
         {song && (
           <div className="flex gap-2">
-            <button onClick={() => setChordSize('text-sm')} className="text-xs bg-gray-600 px-2 py-1 rounded">A-</button>
-            <button onClick={() => setChordSize('text-lg')} className="text-xs bg-gray-600 px-2 py-1 rounded">A+</button>
-            <button onClick={() => setViewMode(viewMode === 'all' ? 'lyrics' : viewMode === 'lyrics' ? 'chords' : 'all')} className="text-xs bg-blue-600 px-2 py-1 rounded">
-              {viewMode === 'all' ? 'Letras' : viewMode === 'lyrics' ? 'Cifras' : 'Tudo'}
+            <button
+              onClick={() => setChordSize(sizes[Math.max(0, currentIndex - 1)])}
+              className="text-xs bg-gray-600 px-2 py-1 rounded"
+            >A-</button>
+            <button
+              onClick={() => setChordSize(sizes[Math.min(sizes.length - 1, currentIndex + 1)])}
+              className="text-xs bg-gray-600 px-2 py-1 rounded"
+            >A+</button>
+            <button
+              onClick={() =>
+                setViewMode(viewMode === 'all' ? 'lyrics' : viewMode === 'lyrics' ? 'chords' : 'all')
+              }
+              className="text-xs bg-blue-600 px-2 py-1 rounded"
+            >
+              {viewMode === 'all' ? 'lyrics' : viewMode === 'lyrics' ? 'Cifras' : 'Tudo'}
             </button>
             {user?.role === 'admin' && (
               <button onClick={() => setEditMode(!editMode)} className="text-xs bg-green-700 px-2 py-1 rounded">
-                {editMode ? 'Visualizar' : 'Editar'}
+                {editMode ? 'View' : 'Edit'}
               </button>
             )}
           </div>
@@ -178,22 +192,14 @@ export default function PlayerMainPage() {
               {song.chords && viewMode !== 'lyrics' && (
                 <div className="mb-6">
                   <h2 className="text-lg font-bold text-[#9F453A] mb-2">Cifras</h2>
-                  <div className="space-y-4 font-mono">
+                  <div className={`space-y-4 font-mono ${chordSize}`}>
                     {JSON.parse(song.chords).map((line: any[], index: number) => (
                       <div key={index}>
-                        <div className="flex gap-2 justify-center">
-                          {line.map((item, idx) => (
-                            <span key={idx} className={`min-w-[50px] text-green-300 text-center ${chordSize}`}>
-                              {item.chords || ''}
-                            </span>
-                          ))}
+                        <div className="text-green-300 text-left break-words whitespace-pre-wrap">
+                          {line.map(item => item.chords || '').join(' ')}
                         </div>
-                        <div className="flex gap-2 justify-center">
-                          {line.map((item, idx) => (
-                            <span key={idx} className={`min-w-[50px] text-white text-center ${chordSize}`}>
-                              {item.lyrics}
-                            </span>
-                          ))}
+                        <div className="text-white text-left break-words whitespace-pre-wrap">
+                          {line.map(item => item.lyrics || '').join(' ')}
                         </div>
                       </div>
                     ))}
@@ -204,13 +210,23 @@ export default function PlayerMainPage() {
               {song.lyrics && viewMode !== 'chords' && (
                 <div>
                   <h2 className="text-lg font-bold text-[#9F453A] mb-2">Letra</h2>
-                  <pre className="whitespace-pre-wrap text-sm text-gray-100">{song.lyrics}</pre>
+                  <pre className={`whitespace-pre-wrap ${chordSize} text-gray-100`}>
+                    {song.lyrics}
+                  </pre>
                 </div>
               )}
             </>
           )}
+          {!song.lyrics && !song.chords && (
+            <div className="text-sm text-gray-400 italic mt-4">
+              Lyrics or chords not found. Admin can add it in Search page.
+            </div>
+          )}
+
         </>
       )}
+
+
     </div>
   );
 }
